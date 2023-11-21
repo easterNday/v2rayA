@@ -4,6 +4,14 @@ import (
 	"crypto/md5"
 	"embed"
 	"fmt"
+	"io"
+	"io/fs"
+	"net"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/v2rayA/v2rayA/common"
@@ -14,13 +22,6 @@ import (
 	"github.com/v2rayA/v2rayA/pkg/util/log"
 	"github.com/v2rayA/v2rayA/server/controller"
 	"github.com/vearutop/statigz"
-	"io"
-	"io/fs"
-	"net"
-	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 //go:embed web
@@ -187,6 +188,7 @@ func Run() error {
 		auth.PUT("dnsList", controller.PutDnsList)
 		auth.GET("routingA", controller.GetRoutingA)
 		auth.PUT("routingA", controller.PutRoutingA)
+		auth.GET("routingE", controller.GetGeoIPList)
 		auth.GET("outbounds", controller.GetOutbounds)
 		auth.GET("outbound", controller.GetOutbound)
 		auth.POST("outbound", controller.PostOutbound)

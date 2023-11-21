@@ -8,6 +8,24 @@
       <p class="modal-card-title">RoutingA</p>
     </header>
     <section class="modal-card-body rules">
+      <b-field label="Edit prompt">
+        <b-taginput
+          v-model="countrys"
+          :data="filterCountrys"
+          autocomplete
+          open-on-focus
+          isSelectOnly
+          icon="label"
+          placeholder="Add a country code"
+          @typing="getFilteredCountryCode"
+        >
+          <template v-slot="props">
+            <strong>{{ props.option }}</strong
+            >: {{ props.option }}
+          </template>
+          <template #empty> There are no items </template>
+        </b-taginput>
+      </b-field>
       <b-input
         v-model="routingA"
         type="textarea"
@@ -33,6 +51,9 @@
           {{ $t("operations.helpManual") }}
         </button>
         <button class="button" type="button" @click="$parent.close()">
+          Simple Editor
+        </button>
+        <button class="button" type="button" @click="$parent.close()">
           {{ $t("operations.cancel") }}
         </button>
         <button class="button is-primary" @click="handleClickSubmit">
@@ -50,6 +71,10 @@ export default {
   name: "ModalCustomRoutingA",
   data: () => ({
     routingA: "",
+    countrys: [],
+    filterCountrys: [],
+    GeoIPList: [],
+    GeoSiteList: [],
   }),
   mounted() {
     this.$axios({
@@ -70,6 +95,14 @@ export default {
       .catch(() => {
         this.$parent.close();
       });
+    this.$axios({
+      url: apiRoot + "/routingE",
+      method: "get",
+    }).then((res) => {
+      this.GeoIPList = res.data.data.GeoIP;
+      this.filterCountrys = res.data.data.GeoIP;
+      this.GeoSiteList = res.data.data.GeoSite;
+    });
     this.initRoutingAAnimationContentStyle();
   },
   methods: {
@@ -99,6 +132,11 @@ export default {
         handleResponse(res, this, () => {
           this.$parent.close();
         });
+      });
+    },
+    getFilteredCountryCode(text) {
+      this.filterCountrys = this.GeoIPList.filter((option) => {
+        return option.toString().toLowerCase().indexOf(text.toLowerCase()) >= 0;
       });
     },
   },
